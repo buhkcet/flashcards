@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>MECH 3542 Midterm 2 Flashcards</title>
+<style>
+:root{
+--font:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+--bg:#f3f4f6;--surface:#fff;--ink:#1c1f24;--mut:#5f6670;--line:#e1e4e9;
+--ac:#2f5fd0;--on-ac:#fff;--acsoft:#e8eefc;
+--good:#1c7a47;--goodbg:#e3f3ea;--bad:#c0392b;--badbg:#fbe8e5;
+--warnbg:#fdf3dc;--warnink:#6b4a0a;--warnline:#e6c26a;
+--chkbg:#eef0f3;--chkink:#454c56;--chkline:#c9ced6;
+--shadow:0 1px 2px rgba(16,24,40,.05),0 6px 20px rgba(16,24,40,.06)}
+@media(prefers-color-scheme:dark){:root{
+--bg:#111317;--surface:#1b1e24;--ink:#e8eaee;--mut:#9aa1ab;--line:#2c3038;
+--ac:#7aa2ff;--on-ac:#0d1222;--acsoft:#1f2a44;
+--good:#5fd08f;--goodbg:#173022;--bad:#ff8a7a;--badbg:#3a1e1b;
+--warnbg:#33290f;--warnink:#f2d89b;--warnline:#7a6224;
+--chkbg:#23262d;--chkink:#c3c8d0;--chkline:#3b4049;
+--shadow:0 1px 2px rgba(0,0,0,.3)}}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 var(--font);min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+svg{flex:none}
+
+/* Top bar */
+.top{width:100%;max-width:720px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;
+padding:calc(10px + env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) 8px max(16px,env(safe-area-inset-left))}
+h1{font-size:16px;font-weight:650;margin:0;white-space:nowrap;flex:none}
+@media(max-width:480px){h1 .sub{display:none}}
+.fbtn{display:inline-flex;align-items:center;gap:8px;min-height:44px;min-width:0;flex:0 1 auto;padding:0 8px 0 12px;border:1px solid var(--line);background:var(--surface);border-radius:22px;cursor:pointer;font-size:15px}
+.fbtn #fsum{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fbtn #fcount{background:var(--acsoft);color:var(--ac);border-radius:12px;padding:1px 9px;font-size:13px;font-variant-numeric:tabular-nums}
+
+/* Main */
+main{flex:1;width:100%;max-width:720px;margin:0 auto;display:flex;flex-direction:column;padding:0 max(16px,env(safe-area-inset-right)) 0 max(16px,env(safe-area-inset-left))}
+.meta{display:flex;align-items:center;justify-content:space-between;gap:10px;color:var(--mut);font-size:15px;min-height:44px;font-variant-numeric:tabular-nums}
+.toggle{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 12px;border:1px solid var(--line);background:transparent;border-radius:18px;cursor:pointer;font-size:14px;color:var(--mut)}
+.toggle[aria-pressed="true"]{background:var(--acsoft);border-color:var(--ac);color:var(--ac)}
+.prog{height:4px;background:var(--line);border-radius:2px;margin:2px 0 12px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--ac);width:0;transition:width .2s}
+
+/* Card */
+.card{flex:1;min-height:300px;display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow);cursor:pointer;touch-action:pan-y;-webkit-tap-highlight-color:transparent}
+.card.flipped{box-shadow:inset 0 4px 0 var(--ac),var(--shadow)}
+.card.isempty{cursor:default;justify-content:center}
+.card.in{animation:in .18s ease-out}
+@keyframes in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.card.in{animation:none}.prog i{transition:none}}
+.tag{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;font-size:13px;color:var(--mut);margin-bottom:14px}
+.badge{flex:none;font-weight:600;font-size:12px;border-radius:10px;padding:2px 9px}
+.badge.s-g{background:var(--goodbg);color:var(--good)}
+.badge.s-m{background:var(--badbg);color:var(--bad)}
+.q{font-size:21px;line-height:1.45;font-weight:600;margin:0}
+.q-small{font-size:15px;color:var(--mut);margin:0 0 16px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.lbl{font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--ac);margin:0 0 2px}
+.a{font-size:19px;line-height:1.45;font-weight:600;margin:0 0 16px}
+.why{margin:0 0 16px}
+.note{border-radius:10px;padding:10px 14px;margin:0 0 10px;font-size:16px;border-left:4px solid}
+.note .lbl{color:inherit}
+.note.mis{background:var(--warnbg);color:var(--warnink);border-color:var(--warnline)}
+.note.chk{background:var(--chkbg);color:var(--chkink);border-color:var(--chkline)}
+.empty{text-align:center;max-width:420px;margin:0 auto}
+.empty-t{font-size:19px;font-weight:650;margin:0 0 6px}
+.empty p{margin:0 0 6px;color:var(--mut)}
+.empty .empty-t{color:var(--ink)}
+.empty .btns{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:16px}
+.keys{text-align:center;color:var(--mut);font-size:13px;margin:10px 0 0}
+
+/* Buttons */
+.btn{min-height:48px;border-radius:12px;border:1px solid var(--line);background:var(--surface);padding:0 18px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.primary{background:var(--ac);color:var(--on-ac);border-color:transparent}
+.btn.miss{background:var(--badbg);color:var(--bad);border-color:transparent}
+.btn.got{background:var(--goodbg);color:var(--good);border-color:transparent}
+.btn.miss[aria-pressed="true"],.btn.got[aria-pressed="true"]{box-shadow:inset 0 0 0 2px currentColor}
+@media(hover:hover){.btn:not(:disabled):hover,.toggle:hover,.fbtn:hover{filter:brightness(.96)}}
+kbd{font:12px ui-monospace,SFMono-Regular,Menlo,monospace;border:1px solid currentColor;border-radius:4px;padding:0 5px;opacity:.7}
+
+/* Bottom action bar */
+.actions{position:sticky;bottom:0;background:var(--bg);margin-top:auto;
+padding:12px max(16px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
+.actions-in{max-width:688px;margin:0 auto;display:flex;align-items:center;gap:10px}
+.nav{width:52px;height:52px;border-radius:50%;padding:0;flex:none}
+.mid{flex:1;display:flex;gap:10px;min-width:0}
+.mid .btn{flex:1;min-height:52px;font-size:17px;padding:0 10px;white-space:nowrap;min-width:0}
+#markrow{flex:1;display:flex;gap:10px}
+
+/* Filter sheet */
+dialog.sheet{border:0;padding:0;margin:0;color:var(--ink);background:var(--bg);width:100%;max-width:none;max-height:88vh;max-height:88dvh;
+position:fixed;inset:auto 0 0 0;border-radius:18px 18px 0 0;box-shadow:0 -8px 30px rgba(0,0,0,.2)}
+dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
+.panel{display:flex;flex-direction:column;max-height:88vh;max-height:88dvh}
+.sheet-h{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px 10px;border-bottom:1px solid var(--line)}
+.sheet-h h2{font-size:18px;margin:0}
+.sheet-b{overflow:auto;padding:4px 16px 16px;overscroll-behavior:contain}
+.sheet-f{padding:12px 16px max(12px,env(safe-area-inset-bottom));border-top:1px solid var(--line)}
+.sheet-f .btn{width:100%}
+@media(min-width:720px){
+dialog.sheet{inset:0;margin:auto;max-width:560px;max-height:min(84vh,760px);border-radius:16px}
+.panel{max-height:min(84vh,760px)}}
+body:has(dialog[open]){overflow:hidden}
+.sec{margin-top:18px}
+.sec-h{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.sec h3{font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--mut);margin:0}
+.link{border:0;background:transparent;color:var(--ac);font-weight:600;font-size:15px;min-height:40px;padding:0 6px;cursor:pointer}
+.chgrp{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:0 14px;margin-bottom:8px}
+.chgrp.on{border-color:var(--ac)}
+.row{display:flex;align-items:center;gap:12px;min-height:46px;cursor:pointer}
+.row input{width:20px;height:20px;margin:0;flex:none;accent-color:var(--ac);cursor:pointer}
+.row.chl .row-t{font-weight:600}
+.row.lec{padding-left:32px;font-size:15px;color:var(--mut);border-top:1px solid var(--line)}
+.cnt{margin-left:auto;font-size:13px;color:var(--mut);font-variant-numeric:tabular-nums}
+.seg{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:4px}
+@media(max-width:440px){.seg{grid-template-columns:repeat(2,1fr)}}
+.seg-b{min-height:52px;border:0;border-radius:9px;background:transparent;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.25;font-size:14px;color:var(--mut)}
+.seg-b b{font-size:16px;color:var(--ink);font-variant-numeric:tabular-nums}
+.seg-b[aria-pressed="true"]{background:var(--acsoft);color:var(--ac);box-shadow:inset 0 0 0 1.5px var(--ac)}
+.seg-b[aria-pressed="true"] b{color:var(--ac)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;font-size:14px;color:var(--mut)}
+.stat b{font-size:22px;line-height:1.2;color:var(--ink);font-variant-numeric:tabular-nums}
+.stat.s-g b{color:var(--good)}.stat.s-m b{color:var(--bad)}
+.sbar{display:flex;height:6px;border-radius:3px;background:var(--line);overflow:hidden;margin:10px 0 14px}
+.sbar .s-g{background:var(--good)}.sbar .s-m{background:var(--bad)}
+.btn.clear{width:100%;background:transparent;color:var(--bad)}
+.btn.clear.armed{background:var(--bad);color:var(--surface);border-color:transparent}
+.fine{font-size:13px;color:var(--mut);margin:6px 0 0;text-align:center}
+
+/* Touch devices: no keyboard hints */
+@media(hover:none){.keys,kbd{display:none}}
+@media(max-width:360px){h1{font-size:15px}.mid .btn{font-size:16px;padding:0 6px}}
+</style></head><body>
+
+<header class="top">
+<h1>MECH 3542<span class="sub"> · Midterm 2</span></h1>
+<button class="fbtn" id="fbtn" type="button" aria-haspopup="dialog" aria-label="Choose cards">
+<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg>
+<span id="fsum"></span><b id="fcount"></b>
+</button>
+</header>
+
+<main>
+<div class="meta">
+<span id="n" aria-live="polite"></span>
+<button class="toggle" id="shuf" type="button" aria-pressed="false">
+<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h4v4M4 20 20 4M20 16v4h-4M15 15l5 5M4 4l5 5"/></svg>
+Shuffle</button>
+</div>
+<div class="prog"><i id="p"></i></div>
+<div class="card" id="c" aria-live="polite"></div>
+<p class="keys"><kbd>Space</kbd> flip · <kbd>←</kbd> <kbd>→</kbd> move · <kbd>1</kbd> missed · <kbd>2</kbd> got it</p>
+</main>
+
+<nav class="actions" aria-label="Card controls"><div class="actions-in">
+<button class="btn nav" id="prev" type="button" aria-label="Previous card"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+<div class="mid">
+<button class="btn primary" id="flip" type="button">Show answer <kbd>Space</kbd></button>
+<div id="markrow" hidden>
+<button class="btn miss" id="mmiss" type="button" aria-pressed="false">✗ Missed it <kbd>1</kbd></button>
+<button class="btn got" id="mgot" type="button" aria-pressed="false">✓ Got it <kbd>2</kbd></button>
+</div>
+</div>
+<button class="btn nav" id="next" type="button" aria-label="Next card"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+</div></nav>
+
+<dialog class="sheet" id="sheet" aria-labelledby="sheet-t"><div class="panel">
+<div class="sheet-h"><h2 id="sheet-t">Choose cards</h2><button class="link" id="x" type="button">Close</button></div>
+<div class="sheet-b">
+<section class="sec">
+<div class="sec-h"><h3>Chapters</h3><span><button class="link" id="fall" type="button">Select all</button><button class="link" id="fnone" type="button">Clear all</button></span></div>
+<div id="filters"></div>
+</section>
+<section class="sec">
+<div class="sec-h"><h3>Show</h3></div>
+<div class="seg" id="sfilt" role="group" aria-label="Show cards"></div>
+</section>
+<section class="sec">
+<div class="sec-h"><h3>Progress in selected chapters</h3></div>
+<div class="stats" id="stats"></div>
+<div class="sbar" id="sbar" aria-hidden="true"></div>
+<button class="btn clear" id="clr" type="button">Clear marks</button>
+<p class="fine">Only clears marks in the selected chapters.</p>
+</section>
+</div>
+<div class="sheet-f"><button class="btn primary" id="done" type="button" autofocus>Done</button></div>
+</div></dialog>
+
+<script>
+/* Chapter names. Add new chapters here. */
+const CH={3:"Composites",4:"Manufacturing",5:"Polymer processing",6:"Ceramic processing",7:"Casting fundamentals",8:"Casting processes",9:"Metal forming fundamentals"};
+/* Cards: {ch, lec, n (question no. from the slides), q, a, why, mis (optional common mistake), chk (optional: verify against slides)} */
+const D=[
+// ---------- Ch 3 Composites, Lecture 1 ----------
+{ch:3,lec:1,n:"1",q:"Is a composite homogeneous or heterogeneous at (a) the macro scale and (b) the micro scale, where you can tell fiber from matrix?",a:"(a) Macro: homogeneous. (b) Micro: heterogeneous.",why:"Homogeneity depends on the scale you look at. Averaged over many fibers the material behaves as one uniform material. At the fiber scale there are two distinct phases.",mis:"Saying a composite is heterogeneous at every scale. Design calculations treat it as homogeneous (but anisotropic) at the macro scale."},
+{ch:3,lec:1,n:"2",q:"Differentiate isotropy from anisotropy.",a:"Isotropic: properties are the same in every direction. Anisotropic: properties depend on direction.",why:"A unidirectional continuous-fiber lamina is strongly anisotropic: E11 (along fibers) is far larger than E22 (across fibers). Most metals are close to isotropic.",mis:"Confusing anisotropy (direction dependence) with heterogeneity (position dependence)."},
+{ch:3,lec:1,n:"3",q:"True or false: how much composite properties depend on loading direction depends on fiber aspect ratio and orientation.",a:"True.",why:"Particles (aspect ratio ~1) or randomly oriented short fibers give near-isotropic properties. Long, aligned fibers give strongly direction-dependent properties."},
+{ch:3,lec:1,n:"4",q:"What is the advantage of the high specific properties of composites?",a:"The same stiffness or strength at lower weight.",why:"Specific property = property / density. Lighter parts for the same load mean fuel savings, more payload, and lower inertia in moving parts. This is why aerospace and automotive use composites.",mis:"Reading 'high specific strength' as 'high absolute strength'."},
+{ch:3,lec:1,n:"5",q:"Can the strength and modulus of metals be tailored the way composites' can?",a:"Strength partly, modulus essentially no.",why:"Alloying, heat treatment and cold work change a metal's strength. Modulus is set by atomic bonding and barely moves. A composite's modulus and strength can both be set by fiber type, Vf and orientation.",mis:"Thinking heat treatment changes a metal's modulus."},
+{ch:3,lec:1,n:"6",q:"How could a PMC's modulus be tailored to any value from about 4 to 250 GPa?",a:"Choose fiber type, fiber volume fraction, orientation, and fiber length (continuous vs. discontinuous).",why:"Low end ≈ unreinforced polymer matrix (~3–4 GPa). High end ≈ high Vf of aligned high-modulus carbon fiber loaded along the fibers (rule of mixtures, Ec = EfVf + EmVm). Everything in between comes from mixing these variables."},
+{ch:3,lec:1,n:"7",q:"Composites' static strength is (higher/lower) than metals', and their fatigue strength is (higher/lower) than metals'.",a:"Fatigue strength: higher. Static strength: see note.",why:"Composites keep a larger fraction of their static strength under cyclic loading, because damage spreads out as matrix cracks rather than one dominant crack.",chk:"Static strength depends on which composite and metal the instructor compared (absolute vs. specific). Confirm the intended answer against the Lecture 1 slides."},
+{ch:3,lec:1,n:"8",q:"What is the endurance limit?",a:"The stress amplitude below which a material survives an effectively infinite number of cycles without fatigue failure.",why:"Shown by the S-N curve flattening out. Steels have one. Aluminum does not, so a fatigue strength at a set number of cycles is quoted instead.",mis:"Confusing it with fatigue strength, which is the stress to failure at a stated number of cycles."},
+{ch:3,lec:1,n:"9",q:"For a notched composite, which is better than in metals: tensile strength or fatigue strength?",a:"Fatigue strength.",why:"Under cyclic load, matrix cracking and delamination around the notch blunt it and redistribute stress. In static tension the notch still acts as a stress concentrator.",chk:"Confirm the mechanism matches the Lecture 1 slides."},
+{ch:3,lec:1,n:"10",q:"Polymer and metal matrices are reinforced to raise (modulus/toughness). Ceramic matrices are reinforced to raise (modulus/toughness).",a:"Polymer and metal: modulus (and strength). Ceramic: toughness.",why:"Polymers are compliant and metals are already tough, so fibers add stiffness. Ceramics are already stiff but brittle, so fibers are there to stop cracks.",mis:"Assuming every reinforcement is for stiffness."},
+{ch:3,lec:1,n:"11",q:"In aerospace PMCs, the fiber volume fraction is (lower than / equal to / higher than) the matrix volume fraction.",a:"Higher than.",why:"Aerospace parts use typical Vf around 0.55–0.65 to maximize the load carried by the fibers."},
+{ch:3,lec:1,n:"12",q:"Which constituent of a composite is continuous?",a:"The matrix.",why:"The matrix is continuous in all directions and surrounds the reinforcement. The reinforcement is the dispersed phase."},
+{ch:3,lec:1,n:"13",q:"Which mechanical properties of a PMC are matrix-dominated?",a:"Transverse strength and modulus, in-plane and interlaminar shear, compressive strength, and environmental/temperature resistance.",why:"In these the load path goes through the matrix, or the matrix must keep fibers from buckling. Fiber-dominated properties are the longitudinal tensile modulus and strength.",chk:"Listed as Q12 a second time on the slide. Compare the list with the Lecture 1 slides."},
+{ch:3,lec:1,n:"14",q:"Are in-plane shear strength and interlaminar shear strength the same?",a:"No. Interlaminar shear strength is lower.",why:"In-plane shear acts in the plane of a ply, where fibers help. Interlaminar shear acts between plies, where only matrix resists it. That is why laminates fail by delamination."},
+// ---------- Ch 3 Composites, Lecture 2 ----------
+{ch:3,lec:2,n:"1",q:"True or false: the matrix is continuous in all directions, but the reinforcement is never continuous in a composite.",a:"False.",why:"In continuous-fiber composites the fibers are continuous along their length (one direction). Only discontinuous composites have non-continuous reinforcement.",mis:"Assuming 'continuous fiber' means continuous in all directions."},
+{ch:3,lec:2,n:"2",q:"Fiber (shear / buckling) failure mode gives the highest compressive strength.",a:"Shear.",why:"Buckling is an instability, so it fails before the fiber material reaches its strength. If the matrix supports the fibers well enough to prevent buckling, they fail in shear at a higher stress."},
+{ch:3,lec:2,n:"3",q:"True or false: PMCs have better corrosion resistance than MMCs.",a:"True.",why:"MMCs can corrode galvanically between fiber and metal matrix (e.g., carbon fiber in aluminum). Polymers do not corrode electrochemically, though they can absorb moisture."},
+{ch:3,lec:2,n:"4",q:"Why maximize the load carried by the reinforcement, and how do you do it?",a:"The reinforcement is much stiffer and stronger, so more load on it means a stiffer, stronger composite.",why:"How: high Vf, high Ef/Em ratio, fibers aligned with the load, fiber length above critical length (high aspect ratio), and a good interfacial bond for load transfer."},
+{ch:3,lec:2,n:"5",q:"What is the difference between an interface and an interphase?",a:"Interface: the 2D boundary between fiber and matrix. Interphase: a 3D region of finite thickness with properties different from both.",why:"An interphase forms from a fiber coating or sizing, a chemical reaction product, or diffusion between the constituents.",mis:"Using the two words interchangeably."},
+{ch:3,lec:2,n:"6(i)",q:"Interfacial strength for a PMC: high, low, or optimal? Justify.",a:"High.",why:"The polymer matrix is the weak, compliant phase. A strong bond moves load into the fibers to raise stiffness and strength."},
+{ch:3,lec:2,n:"6(ii)",q:"Interfacial strength for an MMC: high, low, or optimal? Justify.",a:"High, for load transfer, but without a thick brittle reaction layer.",why:"The goal is the same as a PMC: more load on the fibers. Excess fiber-matrix reaction (e.g., Al4C3 in Al/C) forms a brittle interphase that cracks early.",chk:"Check whether the slides say 'high' or 'optimal' for MMCs."},
+{ch:3,lec:2,n:"6(iii)",q:"Interfacial strength for a CMC: high, low, or optimal? Justify.",a:"Optimal (intermediate).",why:"The goal is toughness. Too strong: the crack cuts straight through fibers (brittle). Too weak: poor load transfer. Optimal: the crack deflects, fibers debond and pull out, absorbing energy.",mis:"Assuming stronger bonding is always better."},
+{ch:3,lec:2,n:"7(i)",q:"Differentiate a lamina from a non-woven mat.",a:"Lamina: one ply of aligned (or woven) fibers in matrix. Non-woven mat: randomly oriented fibers held by a binder.",why:"The lamina is directional. The mat is roughly isotropic in-plane and has lower Vf."},
+{ch:3,lec:2,n:"7(ii)",q:"Differentiate a laminate from a non-laminate.",a:"Laminate: a stack of laminae bonded together. Non-laminate: a bulk composite with no ply structure (e.g., particulate or short-fiber molded part).",why:"Laminates let you choose the angle of each ply. Non-laminates get their orientation from the process."},
+{ch:3,lec:2,n:"7(iii)",q:"Differentiate a hybrid from a non-hybrid composite.",a:"Hybrid: two or more reinforcement types in one matrix (e.g., carbon + glass). Non-hybrid: one reinforcement type.",why:"Hybrids trade properties against cost, e.g., carbon for stiffness plus cheaper glass for toughness."},
+{ch:3,lec:2,n:"7(iv)",q:"Differentiate a sandwich composite from a solid composite.",a:"Sandwich: two thin stiff face sheets bonded to a thick, light core (honeycomb or foam). Solid: full-thickness composite, no core.",why:"The core moves the faces away from the neutral axis, so bending stiffness rises a lot for little added weight (like an I-beam)."},
+{ch:3,lec:2,n:"7(v)",q:"Differentiate a tape lamina from a fabric lamina.",a:"Tape: all fibers parallel (unidirectional). Fabric: fibers woven in two directions (typically 0/90).",why:"Tape gives the highest properties in one direction. Fabric is more balanced and easier to drape, but fiber crimp lowers its properties."},
+{ch:3,lec:2,n:"8(i)",q:"PMC: increase the fiber volume fraction. Modulus and strength increase or decrease?",a:"Both increase.",why:"More load-bearing fiber. This holds up to the maximum allowable Vf, beyond which fibers aren't fully wetted."},
+{ch:3,lec:2,n:"8(ii)",q:"PMC: decrease the fiber aspect ratio. Modulus and strength increase or decrease?",a:"Both decrease.",why:"Load enters a fiber through shear along its length. Shorter fibers (especially below critical length) cannot be loaded to their full strength, so more load stays in the matrix."},
+{ch:3,lec:2,n:"8(iii)",q:"PMC: increase the fiber properties. Modulus and strength increase or decrease?",a:"Both increase.",why:"Rule of mixtures: composite properties rise with the properties of the constituent carrying most of the load."},
+{ch:3,lec:2,n:"8(iv)",q:"PMC: decrease the interfacial strength. Modulus and strength increase or decrease?",a:"Both decrease.",why:"A weaker interface transfers less load from matrix to fiber, and debonding starts earlier."},
+{ch:3,lec:2,n:"8(v)",q:"PMC: increase the fiber angle relative to the loading axis. Modulus and strength increase or decrease?",a:"Both decrease.",why:"Properties are highest at 0°. They fall quickly as the angle grows, and at 90° they are matrix-dominated."},
+{ch:3,lec:2,n:"9",q:"True or false: the allowable Vf depends on fiber aspect ratio and orientation.",a:"True.",why:"Aligned continuous fibers pack tightly (practically ~0.6–0.7). Randomly oriented short fibers jam against each other and pack far less densely, and the higher their aspect ratio the worse they pack."},
+{ch:3,lec:2,n:"10",q:"True or false: fiber orientation in discontinuous-fiber composites is always random. Explain.",a:"False.",why:"Processing can align short fibers. Flow during injection molding or extrusion orients them along the flow direction, and dedicated processes can align them on purpose.",mis:"Equating 'discontinuous' with 'random'."},
+{ch:3,lec:2,n:"11",q:"Which fiber orientation maximizes shear modulus?",a:"±45°.",why:"Pure shear is equivalent to tension and compression along the ±45° directions. Fibers at ±45° carry those directly instead of leaving shear to the matrix."},
+// ---------- Ch 3 Composites, Lecture 3 ----------
+{ch:3,lec:3,n:"1",q:"Identify the factors that influence the properties of a composite.",a:"Constituent properties, fiber volume fraction, fiber aspect ratio/length, fiber orientation, interfacial bond, and defects such as voids (set largely by the manufacturing process).",why:"These are the same variables from Lecture 2 Q8. The manufacturing process controls most of them.",chk:"Compare with the list in the Lecture 3 slides."},
+{ch:3,lec:3,n:"2",q:"Do fiber aspect ratio and orientation affect the density of a composite?",a:"Not directly.",why:"Density follows the rule of mixtures, ρc = ρfVf + ρmVm, which only involves volume fractions. Aspect ratio and orientation matter only indirectly, by limiting the maximum Vf you can reach.",mis:"Thinking aligned fibers make a denser composite at the same Vf."},
+{ch:3,lec:3,n:"3",q:"Differentiate material axes from global axes.",a:"Material axes (1-2-3) follow the fibers of each ply, with 1 along the fibers. Global axes (x-y-z) are the reference for the whole laminate or structure and its loads.",why:"Each ply's properties are known in material axes and rotated by the ply angle θ into global axes to analyze the laminate."},
+{ch:3,lec:3,n:"4",q:"Which laminate lay-up gives quasi-isotropic properties?",a:"Plies at equal angle steps of 180°/n with n ≥ 3, stacked symmetrically, e.g., [0/±45/90]s or [0/±60]s.",why:"This makes in-plane stiffness the same in every direction. It is in-plane only; through-thickness properties are still different."},
+{ch:3,lec:3,n:"5",q:"Order the composite manufacturing processes from lowest to highest strength and modulus of the composite produced.",a:"Short/random-fiber processes lowest, aligned continuous-fiber processes highest.",why:"Strength and modulus follow Vf and alignment, and the process sets both. Roughly: injection molding and spray-up (short, random fibers, low Vf) → compression molding (SMC) → hand lay-up and RTM/VARTM → filament winding and pultrusion → autoclave-cured prepreg (aligned, high Vf, low voids).",chk:"The exact list depends on which processes the slides cover. Use the order shown in the Lecture 3 slides."},
+{ch:3,lec:3,n:"6",q:"Continuous or discontinuous fibers in: (a) PMC aircraft parts, (b) MMC automotive parts, (c) CMC aerospace parts, (d) CMC non-aerospace parts?",a:"(a) Continuous. (b) Discontinuous. (c) Continuous. (d) Discontinuous.",why:"Aerospace pays for maximum performance (continuous fibers). Automotive and industrial parts need low cost and conventional processing, so they use particles, whiskers or short fibers (e.g., SiC-reinforced Al, whisker-reinforced alumina cutting tools)."},
+// ---------- Ch 4 Manufacturing, Introduction ----------
+{ch:4,lec:1,n:"1",q:"What is the difference between processing and assembly operations?",a:"Processing changes the shape, properties or surface of one workpiece. Assembly joins two or more parts into a new unit.",why:"Processing includes shaping, property-enhancing (e.g., heat treatment) and surface operations. Assembly includes welding, brazing, adhesive bonding and mechanical fastening."},
+{ch:4,lec:1,n:"2",q:"Which size scale of manufacturing does this course focus on?",a:"Conventional (macro) scale.",why:"Micro- and nano-scale manufacturing use different processes.",chk:"Confirm against the Manufacturing Introduction slides."},
+// ---------- Ch 5 Polymer processing, Lecture 1 ----------
+{ch:5,lec:1,n:"1",q:"Which two process parameters would you control to reduce the pressure needed in thermoplastic processing?",a:"Melt temperature (raise it) and shear rate (raise it).",why:"Pressure scales with melt viscosity. Higher temperature lowers viscosity. Polymer melts are pseudoplastic (shear-thinning), so a higher shear rate also lowers viscosity.",chk:"Confirm these are the two parameters named in Lecture 1."},
+{ch:5,lec:1,n:"2",q:"Correlate a polymer's MFI with its viscosity and molecular weight.",a:"Higher molecular weight → higher viscosity → lower MFI.",why:"MFI is grams of melt extruded in 10 min through a standard die under a standard load and temperature, so it is inversely related to viscosity. Viscosity rises steeply with molecular weight (roughly M^3.4 for entangled chains).",mis:"Thinking a high MFI means a 'strong' or high-MW polymer. It means a runny, low-MW one."},
+{ch:5,lec:1,n:"3",q:"Order blow molding, thermoforming, injection molding and extrusion by increasing MFI of the polymer used.",a:"Thermoforming < blow molding < extrusion < injection molding.",why:"Thermoformed sheets and blow-molded parisons hang unsupported while hot, so they need high melt strength (high MW, low MFI). Injection molding must fill thin cavities quickly, so it needs a runny melt (high MFI).",chk:"The two ends (thermoforming lowest, injection molding highest) are solid. Confirm the middle order in the Lecture 1 slides."},
+{ch:5,lec:1,n:"4",q:"Which extruder (single or twin screw) has a single operating point (P, Q) for a given die?",a:"Single screw.",why:"At a given screw speed, the operating point is where the screw characteristic line crosses the die characteristic, so the output is fixed by the die. A twin screw acts more like a positive-displacement pump, so output can be set independently of the die.",chk:"Confirm against the extruder characteristic plot in Lecture 1."},
+{ch:5,lec:1,n:"5",q:"Which extruder (single or twin screw) is used to extrude profiles?",a:"Twin screw.",why:"Its positive-displacement conveying gives a steady, controllable output and better mixing, which complex profiles (e.g., PVC window frames) need.",chk:"Confirm against the Lecture 1 slides."},
+{ch:5,lec:1,n:"6",q:"What is die swell, what causes it, what does it do to the part, and how do you minimize its effect?",a:"The extrudate expands to a larger size than the die opening after it exits.",why:"Cause: chains stretched and oriented in the die recover elastically (viscoelastic memory) once released. Effect: wrong dimensions, and on non-circular profiles uneven swell distorts the shape. Minimize: size the die smaller (die size = desired size ÷ swell ratio), use a longer die land so chains relax inside the die, and draw the extrudate down with a puller.",mis:"Thinking it is thermal expansion."},
+{ch:5,lec:1,n:"7",q:"What is the difference between extruded (slit-die) film and blown film?",a:"Slit-die film is oriented mainly in the machine direction (anisotropic). Blown film is stretched in two directions (more balanced properties).",why:"In blowing, the tube is inflated (hoop stretch) and pulled up (axial stretch) at the same time, giving biaxial orientation."},
+{ch:5,lec:1,n:"8",q:"Which method makes sheets thicker than slit-die extrusion can?",a:"Calendering.",why:"The melt is squeezed between a series of heated rolls, and the roll gap sets thickness, which can be larger than a slit die handles well."},
+{ch:5,lec:1,n:"9",q:"How do you control fiber diameter in fiber spinning?",a:"Mainly with the take-up roll speed relative to the extrusion rate (draw-down). Spinneret hole size sets the starting size.",why:"Mass is conserved: the faster the take-up pulls, the thinner the fiber. Faster take-up → smaller diameter."},
+{ch:5,lec:1,n:"10",q:"Is the draw ratio higher in melt-spun or wet-spun fibers? What is the advantage of a higher draw ratio?",a:"Melt spinning gives the higher draw ratio. Higher draw ratio → more chain alignment → higher strength and modulus along the fiber.",why:"Drawing pulls chains parallel to the fiber axis, so load goes into covalent backbone bonds instead of weak secondary bonds.",chk:"Confirm melt vs. wet against the Lecture 1 slides."},
+// ---------- Ch 5 Polymer processing, Lecture 2 ----------
+{ch:5,lec:2,n:"1",q:"Identify the components of an injection molding system.",a:"Injection unit and clamping unit (plus the mold).",why:"Injection unit: hopper, barrel with heater bands, reciprocating screw, nozzle. Clamping unit: fixed and moving platens, tie bars, clamp mechanism that holds the mold shut against injection pressure."},
+{ch:5,lec:2,n:"2",q:"Identify the components of an injection mold.",a:"Two halves (cavity/stationary and core/moving), sprue, runners, gates, cavities, cooling channels, ejection system, vents.",why:"The sprue, runners and gates deliver melt. Cooling channels control cycle time. Ejector pins push the part out. Vents let air escape."},
+{ch:5,lec:2,n:"3",q:"What is the advantage of a 3-plate mold over a 2-plate mold?",a:"The runner is separated from the parts automatically when the mold opens.",why:"The extra plate creates a second parting plane for the runner. It also lets gates be placed anywhere on the part (e.g., at the center), not only at the edge."},
+{ch:5,lec:2,n:"4",q:"What is the advantage of a hot-runner (insulated-runner) mold over 2- and 3-plate molds?",a:"It eliminates runner and sprue scrap.",why:"The runner stays molten between shots and becomes part of the next shot instead of freezing and being ejected. It also shortens the cycle."},
+{ch:5,lec:2,n:"5",q:"Shrinkage in an amorphous polymer is (higher/lower) than in the same polymer when crystalline.",a:"Lower.",why:"Crystals pack chains much more densely than the amorphous state, so crystallizing on cooling adds extra volume shrinkage."},
+{ch:5,lec:2,n:"6",q:"How can you minimize shrinkage when injection molding a part?",a:"Use higher packing/holding pressure and a longer hold time, and lower the melt temperature. Fillers and fiber reinforcement also help.",why:"Packing forces extra melt in to make up for contraction as the part cools. Any remaining shrinkage is compensated by oversizing the cavity. Shrinkage also depends on processing conditions, not just the material."},
+{ch:5,lec:2,n:"7",q:"How do you eliminate flash in injection molding?",a:"Increase clamping force and reduce injection pressure or shot size. Make sure the mold halves seal (no wear or debris at the parting line).",why:"Flash is melt squeezed out at the parting line, so either the mold opens slightly under injection pressure or there is too much melt.",mis:"Increasing shot size. That makes flash worse."},
+{ch:5,lec:2,n:"8",q:"(Blow molding / Rotational molding) is used for large non-cylindrical hollow parts.",a:"Rotational molding.",why:"Powder tumbles inside a heated mold rotating about two axes and coats the walls. Large, odd-shaped hollow parts (tanks, kayaks) are possible because there is no parison to inflate."},
+{ch:5,lec:2,n:"9",q:"Which mold type gives thermoformed parts more uniform thickness: concave (negative) or convex (positive)?",a:"Convex (positive) mold, especially with plug assist or pre-stretching.",why:"With either mold the sheet freezes wherever it touches first and the rest keeps stretching. On a concave mold the corners at the bottom are reached last and get very thin. Plug assist and pre-stretch even out the stretching.",chk:"Check carefully: confirm which mold the Lecture 2 slides call more uniform."},
+{ch:5,lec:2,n:"10",q:"Which thermoforming method gives good surface finish on both the inside and outside of the part?",a:"Mechanical (matched-mold) thermoforming.",why:"A male and a female mold close on the sheet, so both surfaces touch a mold. Vacuum or pressure forming only has one mold surface."},
+// ---------- Ch 5 Polymer processing, Lecture 3 ----------
+{ch:5,lec:3,n:"1",q:"Which mold type gives thermoformed parts more uniform thickness: concave (negative) or convex (positive)? (Repeat of L2 Q9.)",a:"Convex (positive) mold, especially with plug assist or pre-stretching.",why:"The sheet freezes wherever it touches first and the rest keeps stretching. On a concave mold the corners at the bottom are reached last and get very thin.",chk:"Check carefully: confirm which mold the slides call more uniform."},
+{ch:5,lec:3,n:"2",q:"Which thermoforming method gives good surface finish on both inside and outside? (Repeat of L2 Q10.)",a:"Mechanical (matched-mold) thermoforming.",why:"Both surfaces touch a mold."},
+{ch:5,lec:3,n:"3",q:"Is thermoset curing exothermic or endothermic?",a:"Exothermic.",why:"Forming crosslink bonds releases heat. Thick parts can overheat from their own exotherm.",mis:"Thinking of it like melting, which absorbs heat."},
+{ch:5,lec:3,n:"4",q:"Advantages and disadvantages of a higher cure temperature?",a:"Pros: faster cure (shorter cycle) and lower initial viscosity. Cons: the resin may gel before the mold fills, the exotherm can run away, and you risk degradation.",why:"Reaction rate rises with temperature. The process must stay below the degradation temperature (Td), and high temperature also adds residual stress and gradients in thick parts."},
+{ch:5,lec:3,n:"5",q:"In thermoset injection molding, is the injection unit hotter or cooler than the mold? Why?",a:"Cooler.",why:"The resin must stay fluid and uncured in the barrel. It cures only in the hot mold. This is the opposite of thermoplastics (hot barrel, cool mold).",mis:"Carrying over the thermoplastic setup."},
+{ch:5,lec:3,n:"6",q:"Thermoset injection molding vs. reaction injection molding (RIM): compare (a) process time and (b) process pressure.",a:"RIM: shorter time and much lower pressure.",why:"RIM mixes two low-viscosity liquid reactants by impingement just before the mold, and they react quickly (e.g., polyurethane). Low-viscosity liquids need little pressure.",chk:"Confirm the process-time comparison against the Lecture 3 slides."},
+{ch:5,lec:3,n:"7",q:"How is compression molding different from transfer molding?",a:"Compression: the charge goes straight into the open heated cavity and the mold closes on it. Transfer: the charge is heated in a separate pot and forced through a sprue into a closed cavity.",why:"Transfer molding handles inserts and more complex shapes with less flash, but leaves scrap (cull) in the pot and sprue."},
+{ch:5,lec:3,n:"8",q:"How do you introduce gas pockets into a melt to make a foam?",a:"Blowing agents: physical (dissolved gas or a low-boiling liquid that vaporizes) or chemical (decomposes on heating to release gas). Air can also be whipped or injected mechanically.",why:"The gas expands as pressure drops or temperature rises, forming cells that are locked in as the polymer solidifies."},
+{ch:5,lec:3,n:"9",q:"Closed-cell or open-cell foam for buoys?",a:"Closed-cell.",why:"Sealed cells cannot fill with water, so the foam stays buoyant. Open cells soak up water like a sponge."},
+{ch:5,lec:3,n:"10",q:"Thermoset or thermoplastic in (a) rapid prototyping (resin-based) and (b) FDM?",a:"(a) Thermoset (photocurable resin, e.g., stereolithography). (b) Thermoplastic.",why:"SLA cures liquid resin with UV light, which is crosslinking. FDM melts a filament and lays it down, so it must be re-meltable.",chk:"Confirm which rapid-prototyping process the slides mean in (a)."},
+{ch:5,lec:3,n:"11",q:"Can rapid-prototyped parts be functional parts? Justify.",a:"Yes, if the material and the part's properties meet the service loads.",why:"With engineering materials (nylon, PC, PEEK) they can be. Their limits are lower strength than molded parts, anisotropy and porosity, so they suit low-load or custom parts.",chk:"Compare with the stance in the Lecture 3 slides."},
+{ch:5,lec:3,n:"12",q:"Why are FDM parts' strength and modulus lower than compression- or injection-molded parts?",a:"Voids between beads and weak bonds between layers, because no pressure consolidates the material.",why:"Each bead only partly fuses to the one below by diffusion. Molding applies high pressure, giving a dense, fully fused part. FDM parts are also anisotropic, weakest across the layers."},
+// ---------- Ch 6 Ceramic processing, Lecture 1 ----------
+{ch:6,lec:1,n:"1",q:"Why are ceramics (except glasses) processed in the solid state?",a:"Their melting points are very high and they are brittle, so melting and casting is impractical and they can't be shaped by plastic deformation.",why:"Powder shaping and sintering below Tm saves energy, avoids solidification cracking, and keeps grains fine. Glasses are the exception because they soften gradually over a working range."},
+{ch:6,lec:1,n:"2",q:"Water is used as a binder when processing (traditional / technical) ceramics.",a:"Traditional.",why:"Water mixed with clay makes it plastic and formable. Technical ceramics use organic binders."},
+{ch:6,lec:1,n:"3",q:"Powder after (grinding / crushing) is larger.",a:"Crushing.",why:"Crushing is the first, coarse size reduction. Grinding follows it to make fine powder."},
+{ch:6,lec:1,n:"4",q:"Order plastic forming, slip casting, dry pressing and semi-dry pressing by increasing (a) water content and (b) pressure.",a:"(a) Water: dry pressing < semi-dry pressing < plastic forming < slip casting. (b) Pressure: the reverse order.",why:"Less water means less plasticity, so more pressure is needed to compact the powder. Slip casting is a pourable slurry that needs no pressure.",mis:"Treating water and pressure as rising together."},
+{ch:6,lec:1,n:"5",q:"In which drying stage is cracking most likely? Why?",a:"The first (constant-rate) stage.",why:"Water between the particles evaporates and the particles move together, so the part shrinks. The surface dries and shrinks before the interior, and the mismatch causes cracking. In the later stage the particles already touch, so there is little shrinkage."},
+{ch:6,lec:1,n:"6",q:"(Drying / Firing) is done at higher temperature.",a:"Firing.",why:"Drying removes water at modest temperature. Firing bonds the particles at high temperature."},
+{ch:6,lec:1,n:"7",q:"In traditional ceramics, particles bind by (chemical reaction / sintering).",a:"Chemical reaction.",why:"On firing, clay minerals react to form a glassy phase (vitrification) that bonds the particles."},
+{ch:6,lec:1,n:"8",q:"In technical ceramics, particles bind by (chemical reaction / sintering).",a:"Sintering.",why:"Pure powders bond by atomic diffusion at their contact points below the melting point."},
+{ch:6,lec:1,n:"9",q:"What is sintering called when a binder melts, flows and bonds the ceramic particles?",a:"Liquid-phase sintering.",why:"The molten phase wets the particles and speeds up densification. It stays behind as a glassy grain-boundary phase."},
+{ch:6,lec:1,n:"10",q:"True or false: no melting or chemical reaction occurs in solid-state sintering.",a:"True.",why:"Bonding is purely by solid-state diffusion of atoms at particle contacts, driven by the reduction in surface energy."},
+// ---------- Ch 6 Ceramic processing, Lecture 2 ----------
+{ch:6,lec:2,n:"1",q:"Powder made by chemical methods is used for (traditional / technical) ceramics.",a:"Technical.",why:"Chemical synthesis gives the high purity and controlled particle size that technical ceramics need. Traditional ceramics use mined, crushed minerals."},
+{ch:6,lec:2,n:"2",q:"Which two powder characteristics control flow and compaction?",a:"Particle size (and size distribution) and particle shape.",why:"Both decide how particles slide past and pack against each other."},
+{ch:6,lec:2,n:"3",q:"High-mesh-count particles are (finer / coarser) than low-mesh-count particles.",a:"Finer.",why:"Mesh count is openings per linear inch. More openings in the same space means smaller openings.",mis:"Reading a bigger number as a bigger particle."},
+{ch:6,lec:2,n:"4",q:"Particle shape is characterized by ______.",a:"Aspect ratio (or shape factor).",why:"Aspect ratio is the largest dimension divided by the smallest. A sphere is 1.",chk:"Confirm which term the slides use."},
+{ch:6,lec:2,n:"5",q:"Spherical vs. non-spherical particles: effect on (a) flow time, (b) compaction density, (c) green strength.",a:"Spherical: shorter flow time and higher packing density. Non-spherical: higher green strength.",why:"Spheres roll past each other easily and pack efficiently. Irregular particles interlock mechanically, which holds the green compact together.",mis:"Assuming spherical wins on all three."},
+{ch:6,lec:2,n:"6",q:"What is the role of (a) lubricants and (b) binders in powder shaping?",a:"(a) Lubricants cut friction between particles and against the die wall. (b) Binders hold particles together, giving green strength.",why:"Lower friction gives more uniform density and easier ejection. Binders are burned out before or during sintering."},
+{ch:6,lec:2,n:"7",q:"How can you improve the packing factor (green density) of a compact?",a:"Use a particle size distribution, higher compaction pressure, vibration, and lubricants.",why:"Small particles fill the gaps between large ones. Pressure and vibration rearrange the particles into tighter packing."},
+{ch:6,lec:2,n:"8",q:"Single particle size or a size distribution? Why?",a:"A size distribution.",why:"Single-size spheres leave fixed gaps (packing ~0.6 random, 0.74 at best). Smaller particles fill those gaps, raising density."},
+{ch:6,lec:2,n:"9",q:"Order PIM, doctor-blade, isostatic pressing and pressing by increasing (a) pressure and (b) compact density.",a:"Both: doctor-blade < PIM < pressing < isostatic pressing.",why:"Doctor-blade spreads a slurry with essentially no pressure. PIM uses moderate injection pressure with a lot of binder. Die pressing is higher. Isostatic pressing applies high pressure from all sides, giving the highest, most uniform density.",chk:"Confirm both orders against the Lecture 2 slides."},
+{ch:6,lec:2,n:"10",q:"Which of PIM, doctor-blade, isostatic pressing and pressing do not use a binder?",a:"Pressing and isostatic pressing.",why:"PIM and doctor-blade depend on a large binder fraction to make the powder flow or form a tape.",chk:"Confirm against the slides; dry pressing sometimes uses a small amount of binder."},
+{ch:6,lec:2,n:"11",q:"The biggest increase in density happens during (compaction / sintering).",a:"Sintering.",why:"Diffusion closes the pores between particles, with large shrinkage. Compaction only rearranges and packs particles."},
+{ch:6,lec:2,n:"12",q:"How does sintering temperature affect sintering time? Why?",a:"Higher temperature → shorter time.",why:"Sintering is diffusion-controlled, and diffusion rises exponentially with temperature (Arrhenius). The trade-off is more grain growth."},
+{ch:6,lec:2,n:"13",q:"Ceramics (with / without) binder left after sintering can be used above the sintering temperature.",a:"Without.",why:"Sintering happens below the ceramic's melting point, so a pure ceramic survives above it. A leftover binder/glassy phase would soften or melt."},
+// ---------- Ch 7 Casting fundamentals ----------
+{ch:7,lec:1,n:"1",q:"Large or small grain size? Why? Are grains larger in castings or wrought products?",a:"Small grains are preferred. Castings have larger grains.",why:"Smaller grains mean more grain boundaries blocking dislocations, so higher strength and toughness (Hall-Petch). Wrought products are refined by deformation and recrystallization."},
+{ch:7,lec:1,n:"2",q:"A riser is used in (expendable / permanent) mold casting.",a:"Expendable.",why:"Risers are a sand-casting feature that feeds shrinkage. They are cut off and the metal recycled."},
+{ch:7,lec:1,n:"3",q:"One advantage and one disadvantage of high superheat when pouring?",a:"Pro: the metal stays fluid longer and fills thin sections (fewer misruns and cold shuts). Con: more dissolved gas, more shrinkage, coarser grains and more mold erosion.",why:"Superheat is how far the pouring temperature is above the melting point. It buys time before freezing, at those costs."},
+{ch:7,lec:1,n:"4",q:"Low, optimal or high pouring flow rate? Justify.",a:"Optimal.",why:"Too low: metal freezes before the cavity fills (misruns, cold shuts). Too high: turbulence traps gas and oxides and erodes the mold."},
+{ch:7,lec:1,n:"5",q:"What is the role of (a) the sprue well, (b) the runner extension, (c) the runner well?",a:"(a) Absorbs the impact of falling metal and reduces turbulence. (b) Traps the first cold, dirty metal past the gates. (c) Slows the flow and collects slag and dross.",why:"All three keep defects and turbulence out of the cavity.",chk:"Confirm (b) and (c) against the Chapter 7 slides."},
+{ch:7,lec:1,n:"6",q:"Should the riser take longer or shorter to solidify than the casting? Why?",a:"Longer.",why:"The riser feeds liquid metal into the casting as it shrinks, so it must freeze last. Chvorinov's rule: t = Cm(V/A)^n, so give the riser a larger V/A."},
+{ch:7,lec:1,n:"7",q:"Cylindrical or rectangular cross-section for risers and runners? Why?",a:"Cylindrical.",why:"A cylinder has a higher volume-to-surface-area ratio, so it loses heat more slowly (riser stays liquid longer) and has less friction (runner).",chk:"Confirm what the slides say for runners specifically."},
+{ch:7,lec:1,n:"8",q:"Is segregation found in cast pure metals or cast alloys? Why?",a:"Cast alloys.",why:"Alloys freeze over a temperature range. The first solid is richer in the higher-melting element, so composition varies through the casting. Pure metals freeze at one temperature with one composition."},
+{ch:7,lec:1,n:"9",q:"True or false: the pattern size should equal the cavity size.",a:"As written, true: the pattern forms the cavity. The key point is that both are larger than the final part.",why:"Shrinkage and machining allowances (plus draft) make the pattern, and so the cavity, larger than the finished casting.",chk:"The intended answer is probably 'False' if the question means pattern vs. final part. Check the slide wording."},
+{ch:7,lec:1,n:"10",q:"How can you prevent a shrinkage cavity in sand casting?",a:"Use a correctly sized riser that freezes last, and promote directional solidification toward it.",why:"Chills on thick sections, insulating sleeves on the riser, and designs without isolated thick 'hot spots' make the casting freeze toward the riser so liquid can keep feeding it."},
+// ---------- Ch 8 Casting processes ----------
+{ch:8,lec:1,n:"1",q:"(Solid / Cope & drag) pattern is used for complex parts and (Solid / Cope & drag) for simple parts.",a:"Complex: cope and drag (split). Simple: solid.",why:"A split pattern lets each half be withdrawn from its own mold half, which complex shapes need."},
+{ch:8,lec:1,n:"2",q:"Sand from (green-sand / dry-sand) molds can be recycled.",a:"Green-sand.",why:"Green sand is just sand, clay and water. It is not baked, so it can be re-moistened and reused."},
+{ch:8,lec:1,n:"3",q:"Single grain size or a size distribution for mold sand? Why?",a:"It is a trade-off: uniform size gives better permeability, a distribution gives better strength and finish.",why:"Gaps between same-size grains let gases escape. Small grains filling the gaps pack more tightly, making the mold stronger and smoother but less permeable.",chk:"Check which one the slides prefer."},
+{ch:8,lec:1,n:"4",q:"(Dry-sand / Skin-dried) molds use organic binders.",a:"Dry-sand.",why:"Dry-sand molds use organic binders and are baked for strength. Skin-dried molds are green sand dried only at the surface."},
+{ch:8,lec:1,n:"5",q:"The pattern material can be reused in (expanded polystyrene / investment) casting.",a:"Investment.",why:"The wax pattern is melted out and can be recovered. Polystyrene is vaporized by the incoming metal.",chk:"Confirm against the slides."},
+{ch:8,lec:1,n:"6",q:"(Sand / Die) casting is used for large metal parts.",a:"Sand.",why:"Sand molds can be any size. Die-casting machines and steel dies limit part size."},
+{ch:8,lec:1,n:"7",q:"Metals cast by (sand / die) casting have the higher melt temperature.",a:"Sand.",why:"Steel and cast iron are sand cast. Die casting is limited to lower-melting alloys (Zn, Al, Mg), because higher temperatures would wear out the steel die."},
+{ch:8,lec:1,n:"8",q:"Cooling rate is higher in (expendable / permanent) mold processes.",a:"Permanent.",why:"Metal molds conduct heat away much faster than sand."},
+{ch:8,lec:1,n:"9",q:"(Hot-chamber / Cold-chamber) die casting has the higher production rate.",a:"Hot-chamber.",why:"The injection unit sits in the molten metal, so there is no ladling each shot. Cold-chamber ladles metal in each cycle, which suits Al and other alloys that would attack a submerged plunger."},
+{ch:8,lec:1,n:"10",q:"What is rheocasting, and why is it better than regular casting?",a:"Casting a stirred semi-solid slurry (non-dendritic, globular solid) instead of a fully liquid melt.",why:"Lower temperature, less shrinkage and porosity (smoother, laminar fill), finer microstructure, longer die life and better mechanical properties."},
+{ch:8,lec:1,n:"11",q:"(Centrifugal / Semi-centrifugal) casting makes solid parts without radial symmetry.",a:"Centrifugal (centrifuge casting).",why:"True centrifugal casting makes hollow tubes. Semi-centrifugal makes solid, radially symmetric parts (e.g., wheels). Centrifuge casting arranges non-symmetric parts around the spin axis.",chk:"Confirm the slides' naming for the three variants."},
+{ch:8,lec:1,n:"12",q:"The casting defect caused by poor mold collapsibility is ______.",a:"Hot tearing (hot cracking).",why:"A rigid mold resists the casting's contraction while it is still weak near the solidus, so it tears."},
+{ch:8,lec:1,n:"13",q:"The penetration defect in sand casting is due to ______.",a:"Highly fluid liquid metal penetrating into the sand mold or core.",why:"High pouring temperature (high fluidity) and coarse, loosely packed sand make it worse. The result is sand fused into the casting surface."},
+{ch:8,lec:1,n:"14",q:"Moisture-related defects are found in (green-sand / dry-sand) molds.",a:"Green-sand.",why:"Green sand contains water, which turns to steam on pouring and causes blows, pinholes and gas porosity."},
+{ch:8,lec:1,n:"15",q:"(Die / Sand) casting gives finer grain size.",a:"Die.",why:"The metal die cools the casting much faster, so more grains nucleate and they have less time to grow."},
+// ---------- Ch 9 Metal forming fundamentals (written from the slides; no question list in this handout) ----------
+{ch:9,lec:1,n:"1",q:"Compare bulk deformation and sheet metal working: starting material, surface-area-to-volume ratio, amount of deformation, and power needed.",a:"Bulk: billets or bars, low surface-area-to-volume ratio, large deformation through the whole volume, more power. Sheet metal: sheets, strips or coils, high surface-area-to-volume ratio, smaller and localized deformation, less power.",why:"Bulk processes make a major change of shape. A sheet metal part is called a stamping."},
+{ch:9,lec:1,n:"2",q:"Name the four bulk deformation processes and the three basic sheet metal working processes.",a:"Bulk: rolling, forging, extrusion, wire and bar drawing. Sheet metal: shearing (cutting), bending, deep drawing.",why:"These are covered in detail in Chapters 18 and 19."},
+{ch:9,lec:1,n:"3",q:"Which process parameters in metal forming affect the power required?",a:"Force (tensile, compressive, shear, flexural), strain rate, temperature, and friction between the work and the tool.",why:"Metal forming shapes the work by plastically deforming it against a die. All four change how much force, and so power, that takes."},
+{ch:9,lec:1,n:"4",q:"Why does a manufacturing engineer need the material's stress-strain behavior to plan a forming process?",a:"To estimate the stress, and so the force, needed to deform the material by the desired strain. The power, and the size of the motor, scale with that force.",why:"Temperature and strain rate are then chosen so the part is formed in the shortest time with the least power."},
+{ch:9,lec:1,n:"5",q:"How are engineering stress and strain different from true stress and strain? Give the formulas.",a:"Engineering: s = F/A₀ and e = (L − L₀)/L₀, using the original dimensions. True: σ = F/A using the current area, so σ = s(1 + e), and ε = ln(L/L₀) = ln(1 + e).",why:"In forming the cross-section changes a lot, so true stress and strain are used. σ = s(1 + e) assumes constant volume.",mis:"Using engineering strain for large deformations. It underestimates the stress the material actually carries."},
+{ch:9,lec:1,n:"6",q:"What is the flow curve? Write its equation and name the constants.",a:"The true stress–true strain curve beyond the yield point: Yf = Kεⁿ. K = strength coefficient, n = strain-hardening exponent.",why:"On log-log axes it is a straight line with slope n. K equals the flow stress at a true strain of 1."},
+{ch:9,lec:1,n:"7",q:"What is the average flow stress, and what is its formula?",a:"The flow stress averaged over the deformation from zero to the final strain ε: Ȳf = Kεⁿ/(1 + n).",why:"Flow stress keeps rising as the metal strain-hardens, so the average is used to estimate the work done over the whole deformation."},
+{ch:9,lec:1,n:"8",q:"K = 850 MPa, n = 0.3. A 100 mm gage length is stretched to 157 mm. Find the flow stress at the new length and the average flow stress.",a:"Yf ≈ 669 MPa. Ȳf ≈ 515 MPa.",why:"ε = ln(157/100) = 0.451. Yf = 850 × 0.451^0.3 = 669 MPa. Ȳf = 669/1.3 = 515 MPa.",mis:"Using engineering strain (0.57) instead of true strain."},
+{ch:9,lec:1,n:"9",q:"How does raising the forming temperature change the flow curve?",a:"Yield strength, strength coefficient K and strain-hardening exponent n decrease. Strain to failure (ductility) increases.",why:"How much they drop depends on the forming temperature relative to the recrystallization temperature."},
+{ch:9,lec:1,n:"10",q:"Why can't a 1.1 in. steel plate be cold rolled to 0.1 in. in one pass?",a:"That is a 90% reduction, and most steels fail at 20–40% strain.",why:"With width constant, % reduction = (t₀ − tf)/t₀ = (1.1 − 0.1)/1.1 = 90%. The reduction per pass must stay below about 40%."},
+{ch:9,lec:1,n:"11",q:"Rolling 1.1 in. to 0.1 in. at up to 30% reduction per pass: how many passes, and what reduction does the last pass need?",a:"7 passes. The last pass needs about 22.7%.",why:"After k passes at 30%, t = 1.1 × 0.7^k: 0.77, 0.539, 0.377, 0.264, 0.185, 0.129. A 7th pass at 30% would give 0.091 in., which is too thin, so it only needs (0.129 − 0.1)/0.129 ≈ 22.7%."},
+{ch:9,lec:1,n:"12",q:"Why must the steel be annealed between cold rolling passes?",a:"To recrystallize it, which restores the undeformed state before the next pass.",why:"Each pass strain-hardens the metal and uses up ductility. Recrystallization removes the effect of the plastic deformation, so the next pass starts from a soft, ductile state."},
+{ch:9,lec:1,n:"13",q:"How are annealing temperature and recrystallization time related, and how is the recrystallization temperature TR defined?",a:"Higher annealing temperature → shorter recrystallization time. TR is the temperature at which recrystallization completes in about 1 hour.",why:"Recrystallization is thermally activated, so it speeds up sharply with temperature.",chk:"The slide shows this as a plot (1 hour at TR). Confirm the definition against the slide."},
+{ch:9,lec:1,n:"14",q:"Classify cold, warm and hot working by temperature.",a:"Cold: room temperature up to 0.3Tm. Warm: 0.3Tm to TR (≈ 0.5Tm). Hot: TR (≈ 0.5Tm) up to Tm.",why:"Tm is the melting point on an absolute scale (K). The class depends on where the forming temperature sits relative to recrystallization.",mis:"Computing the ratio with °C instead of kelvin."},
+{ch:9,lec:1,n:"15",q:"Which of cold, warm and hot working need annealing between passes? Why doesn't the other?",a:"Cold and warm working need annealing between passes. Hot working doesn't.",why:"Hot working is above TR, so the metal recrystallizes during deformation (dynamic recrystallization). That allows large reductions in hot rolling without separate annealing steps."},
+{ch:9,lec:1,n:"16",q:"Advantages and disadvantages of cold working?",a:"Pros: better accuracy and tolerances, better surface finish, strain hardening raises strength and hardness, grain flow can give useful directional properties, no heating needed. Cons: higher forces and power, surfaces must be free of scale and dirt, ductility and strain hardening limit how much forming can be done.",why:"Some metals must be annealed before further cold forming, and some are not ductile enough to be cold worked at all."},
+{ch:9,lec:1,n:"17",q:"What are the advantages of warm working over cold working?",a:"Less strain hardening and higher ductility (K and n are lower), so lower forming force and power.",why:"It sits between cold and hot working: warmer than room temperature but still below TR."},
+{ch:9,lec:1,n:"18",q:"Advantages and disadvantages of hot working?",a:"Pros: large shape changes possible (high ductility), lower forces and power, metals that crack when cold worked can be formed, properties generally isotropic, no work hardening. Cons: lower dimensional accuracy, higher total energy (heating), scale and poorer surface finish, shorter tool life.",why:"The lower forming force comes from the low flow stress above TR, but heating the work costs energy.",mis:"Saying hot working needs less total energy. It needs less forming force, but more total energy."},
+{ch:9,lec:1,n:"19",q:"A part will be cold formed afterwards. Should the earlier forming be hot or cold? Why?",a:"Hot.",why:"Hot working leaves no work hardening, so the part keeps its full ductility for the later cold forming."},
+{ch:9,lec:1,n:"20",q:"How does strain rate affect the flow curve? Write the equation and name the constants.",a:"Higher strain rate raises the flow stress: Yf = Cε̇^m. C = strength coefficient (not the same as K), m = strain-rate sensitivity exponent.",why:"The slides say yield strength, C and m increase with strain rate. The effect matters most in hot working.",chk:"Confirm against Fig. 18.5 which quantities the slides say increase with strain rate."},
+{ch:9,lec:1,n:"21",q:"With strain rate held constant, how do C and m change as temperature rises?",a:"C decreases and m increases.",why:"On the log-log plot of flow stress vs. strain rate, curves at higher temperature sit lower (smaller C) and are steeper (larger m).",chk:"Read off Fig. 18.6 on the slide to confirm."},
+{ch:9,lec:1,n:"22",q:"Which flow-stress equation is used for cold/warm working and which for hot working? Why can strain rate be ignored in the first case?",a:"Cold and warm: Yf = Kεⁿ (and Ȳf = Kεⁿ/(1 + n)). Hot: Yf = Cε̇^m.",why:"The general form depends on strain, strain rate and temperature. m is small in cold and warm working (and in hot working at low strain rate), so the strain-rate effect is neglected there.",chk:"The slide's wording on when each equation applies is garbled in the text; confirm against slide 26."},
+{ch:9,lec:1,n:"23",q:"A part is compressed from h = 100 mm to 50 mm at a hot working temperature, platen speed 200 mm/s. C = 95 MPa, m = 0.2. Find the flow stress at the final height.",a:"Yf ≈ 125 MPa.",why:"Strain rate ε̇ = v/h = 200/50 = 4 s⁻¹ at the final height. Yf = 95 × 4^0.2 = 125.4 MPa.",mis:"Using the starting height (100 mm) for the strain rate. It must be the current height."},
+{ch:9,lec:1,n:"24",q:"What are the effects of friction in metal forming, and when is it worst?",a:"It reduces metal flow, increases forces and power, and increases tool wear. Friction and tool wear are worse in hot working.",why:"Lubricants are used to reduce it."},
+{ch:9,lec:1,n:"25",q:"What decides the choice of lubricant in metal forming?",a:"Type of forming process, hot or cold working, work material, chemical reactivity with tool and work metals, ease of application, and cost.",why:"Hot working, for example, needs lubricants that survive high temperature (such as glass or graphite), while cold working can use oils and soaps."}
+];
+/* Optional custom lecture labels, keyed "chapter-lecture". */
+const LBL={"4-1":"Intro","7-1":"Fundamentals","8-1":"Processes","9-1":"Fundamentals"};
+
+/* ================= UI (no edits needed when adding cards) ================= */
+/* localStorage keys (kept from the original version so saved progress survives) */
+const KEY="mech3542_sel",MKEY=KEY+"_marks",SKEY=KEY+"_show";
+const $=id=>document.getElementById(id);
+function load(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function store(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+function el(t,cls,txt){const e=document.createElement(t);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
+
+const groups={};D.forEach(d=>{(groups[d.ch]=groups[d.ch]||new Set()).add(d.lec)});
+const chs=Object.keys(groups).sort((a,b)=>a-b);
+const lecsOf=ch=>[...groups[ch]].sort((a,b)=>a-b);
+const gid=(ch,l)=>ch+"-"+l;
+const lecLabel=(ch,l)=>LBL[ch+"-"+l]||"Lecture "+l;
+const all=[];chs.forEach(ch=>lecsOf(ch).forEach(l=>all.push(gid(ch,l))));
+/* Marks: 'g' = got it, 'm' = missed. Keyed by chapter-lecture-question so they survive adding cards. */
+const cid=d=>d.ch+"-"+d.lec+"-"+d.n;
+
+let sel=new Set();
+try{const s=JSON.parse(load(KEY));if(Array.isArray(s))sel=new Set(s.filter(k=>all.includes(k)))}catch(e){}
+if(!sel.size)all.forEach(k=>sel.add(k));
+let mk={};try{const m=JSON.parse(load(MKEY));if(m&&typeof m==="object"&&!Array.isArray(m))mk=m}catch(e){}
+let show=load(SKEY);if(!["all","m","u","g"].includes(show))show="all";
+
+const saveSel=()=>store(KEY,JSON.stringify([...sel]));
+const saveMk=()=>store(MKEY,JSON.stringify(mk));
+const inSel=d=>sel.has(gid(d.ch,d.lec));
+const stOk=d=>show==="all"||(show==="u"?!mk[cid(d)]:mk[cid(d)]===show);
+const cards=()=>D.map((d,k)=>k).filter(k=>inSel(D[k])&&stOk(D[k]));
+const SHOWN={all:"All",m:"Missed",u:"Not marked",g:"Got it"};
+
+const c=$("c"),dlg=$("sheet"),clr=$("clr");
+let shuffled=false,ord=[],i=0,f=false,atEnd=false,armed=null;
+
+function shuffle(a){for(let k=a.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[a[k],a[j]]=[a[j],a[k]]}return a}
+/* The list is only rebuilt when a filter changes, never when a card is marked. */
+function build(){ord=cards();if(shuffled)shuffle(ord);i=0;f=false;atEnd=false}
+function apply(){saveSel();build();drawFilters();render()}
+
+function selSummary(){
+if(!sel.size)return "No chapters";
+if(sel.size===all.length)return "All chapters";
+const parts=[];
+chs.forEach(ch=>{const ls=lecsOf(ch),on=ls.filter(l=>sel.has(gid(ch,l)));if(!on.length)return;
+parts.push(on.length===ls.length?"Ch "+ch:"Ch "+ch+" ("+on.map(l=>"L"+l).join(", ")+")")});
+return parts.join(", ");
+}
+
+function drawFilters(){
+const ae=document.activeElement,fk=ae&&ae.dataset?ae.dataset.k:null;
+const box=$("filters");box.replaceChildren();
+const row=(cls,k,txt,n,checked,mixed,fn)=>{const l=el("label","row "+cls),x=el("input");x.type="checkbox";x.checked=checked;x.indeterminate=mixed;x.dataset.k=k;x.onchange=fn;l.append(x,el("span","row-t",txt),el("span","cnt",n));return l};
+chs.forEach(ch=>{
+const lecs=lecsOf(ch),ks=lecs.map(l=>gid(ch,l)),on=ks.filter(k=>sel.has(k)).length;
+const g=el("div","chgrp"+(on?" on":""));
+g.append(row("chl","ch"+ch,"Ch "+ch+" · "+(CH[ch]||""),D.filter(d=>d.ch==ch).length,on===ks.length,on>0&&on<ks.length,
+()=>{ks.forEach(k=>on===ks.length?sel.delete(k):sel.add(k));apply()}));
+if(lecs.length>1)lecs.forEach(l=>{const k=gid(ch,l);
+g.append(row("lec",k,lecLabel(ch,l),D.filter(d=>d.ch==ch&&d.lec==l).length,sel.has(k),false,()=>{sel.has(k)?sel.delete(k):sel.add(k);apply()}))});
+box.append(g)});
+
+const S=D.filter(inSel),g=S.filter(d=>mk[cid(d)]==="g").length,m=S.filter(d=>mk[cid(d)]==="m").length,u=S.length-g-m;
+const sf=$("sfilt");sf.replaceChildren();
+[["all",S.length],["m",m],["u",u],["g",g]].forEach(([k,n])=>{
+const b=el("button","seg-b");b.type="button";b.dataset.k="show-"+k;b.setAttribute("aria-pressed",show===k);
+b.append(el("span","",SHOWN[k]),el("b","",n));b.onclick=()=>{show=k;store(SKEY,k);apply()};sf.append(b)});
+
+const st=$("stats");st.replaceChildren();
+[["g","Got it",g],["m","Missed",m],["u","Not marked",u]].forEach(([k,t,n])=>{const x=el("div","stat s-"+k);x.append(el("b","",n),el("span","",t));st.append(x)});
+const bar=$("sbar");bar.replaceChildren();
+[["g",g],["m",m]].forEach(([k,n])=>{const x=el("i","s-"+k);x.style.width=(S.length?n/S.length*100:0)+"%";bar.append(x)});
+if(!armed)clr.disabled=!(g+m);
+
+$("fsum").textContent=selSummary()+(show==="all"?"":" · "+SHOWN[show]);
+$("fcount").textContent=ord.length;
+$("fbtn").setAttribute("aria-label","Choose cards. Now: "+$("fsum").textContent+", "+ord.length+" cards");
+$("done").textContent=ord.length?"Study "+ord.length+" card"+(ord.length===1?"":"s"):"Done";
+if(fk){const t=document.querySelector('[data-k="'+fk+'"]');if(t&&t!==ae)t.focus()}
+}
+
+function note(cls,lbl,txt){const b=el("div","note "+cls);b.append(el("p","lbl",lbl),document.createTextNode(txt));return b}
+function btn(txt,cls,fn){const b=el("button",cls,txt);b.type="button";b.onclick=e=>{e.stopPropagation();fn()};return b}
+
+function render(){
+const ae=document.activeElement,has=ord.length>0;
+$("n").textContent=has?"Card "+(i+1)+" of "+ord.length+(atEnd?" · end of list":""):"No cards";
+$("p").style.width=has?((i+1)/ord.length*100)+"%":"0";
+$("prev").disabled=$("next").disabled=ord.length<2;
+$("flip").disabled=!has;
+$("flip").hidden=has&&f;$("markrow").hidden=!(has&&f);
+c.replaceChildren();
+c.classList.toggle("flipped",has&&f);c.classList.toggle("isempty",!has);
+c.classList.remove("in");void c.offsetWidth;c.classList.add("in");
+if(!has){
+const e=el("div","empty"),b=el("div","btns");
+if(!sel.size){
+e.append(el("p","empty-t","No chapters selected"),el("p","","Choose at least one chapter or lecture to study."));
+b.append(btn("Choose chapters","btn primary",openSheet));
+}else{
+const msg={m:["No missed cards","You haven't marked any card in the selected chapters as missed."],
+u:["No unmarked cards","Every card in the selected chapters is already marked."],
+g:["No “Got it” cards","You haven't marked any card in the selected chapters as got it."]}[show];
+e.append(el("p","empty-t",msg[0]),el("p","",msg[1]+" Show all cards, or pick other chapters."));
+b.append(btn("Show all cards","btn primary",()=>{show="all";store(SKEY,"all");apply()}),btn("Choose chapters","btn",openSheet));
+}
+e.append(b);c.append(e);
+}else{
+const d=D[ord[i]],s=mk[cid(d)];
+$("mmiss").setAttribute("aria-pressed",s==="m");$("mgot").setAttribute("aria-pressed",s==="g");
+const tag=el("div","tag");
+tag.append(el("span","","Ch "+d.ch+" "+(CH[d.ch]||"")+" · "+lecLabel(d.ch,d.lec)+" · Q"+d.n));
+if(s)tag.append(el("span","badge s-"+s,s==="g"?"✓ Got it":"✗ Missed"));
+c.append(tag);
+if(!f)c.append(el("p","q",d.q));
+else{
+c.append(el("p","q-small",d.q),el("p","lbl","Answer"),el("p","a",d.a),el("p","lbl","Why"),el("p","why",d.why));
+if(d.mis)c.append(note("mis","Common mistake",d.mis));
+if(d.chk)c.append(note("chk","Check your slides",d.chk));
+}
+}
+/* If the focused control was just hidden (Show answer ↔ mark buttons), move focus to its replacement. */
+if(ae&&ae.closest&&ae.closest(".actions")&&ae.closest("[hidden]"))(f?$("mmiss"):$("flip")).focus({preventScroll:true});
+}
+
+function flip(){if(!ord.length)return;f=!f;render()}
+function go(k){if(!ord.length)return;i=(i+k+ord.length)%ord.length;f=false;atEnd=false;render();window.scrollTo({top:0})}
+/* Marking saves and moves on. On the last card it stays put instead of wrapping. */
+function mark(v){if(!f||!ord.length)return;mk[cid(D[ord[i]])]=v;saveMk();drawFilters();
+if(i<ord.length-1)go(1);else{f=false;atEnd=true;render()}}
+
+function openSheet(){disarm();drawFilters();if(dlg.showModal)dlg.showModal();else dlg.setAttribute("open","");dlg.querySelector(".sheet-b").scrollTop=0}
+function closeSheet(){disarm();if(dlg.close)dlg.close();else dlg.removeAttribute("open")}
+function disarm(){if(armed)clearTimeout(armed);armed=null;clr.classList.remove("armed");clr.textContent="Clear marks"}
+
+$("flip").onclick=flip;
+$("prev").onclick=()=>go(-1);
+$("next").onclick=()=>go(1);
+$("mmiss").onclick=()=>mark("m");
+$("mgot").onclick=()=>mark("g");
+$("shuf").onclick=()=>{shuffled=!shuffled;$("shuf").setAttribute("aria-pressed",shuffled);build();drawFilters();render()};
+$("fbtn").onclick=openSheet;
+$("done").onclick=closeSheet;
+$("x").onclick=closeSheet;
+dlg.addEventListener("click",e=>{if(e.target===dlg)closeSheet()});
+dlg.addEventListener("close",disarm);
+$("fall").onclick=()=>{all.forEach(k=>sel.add(k));apply()};
+$("fnone").onclick=()=>{sel.clear();apply()};
+/* Two-click confirm (no confirm() dialogs). Only clears the selected chapters. */
+clr.onclick=()=>{
+if(armed){disarm();for(const d of D)if(inSel(d))delete mk[cid(d)];saveMk();apply()}
+else{const n=D.filter(d=>inSel(d)&&mk[cid(d)]).length;
+clr.textContent="Tap again to clear "+n+" mark"+(n===1?"":"s");clr.classList.add("armed");armed=setTimeout(disarm,3000)}};
+
+/* Card: tap/click flips, horizontal swipe moves (a swipe never flips). */
+let sx=null,sy=0,swiped=false;
+c.addEventListener("pointerdown",e=>{if(e.button)return;sx=e.clientX;sy=e.clientY;swiped=false});
+c.addEventListener("pointerup",e=>{if(sx===null)return;const dx=e.clientX-sx,dy=e.clientY-sy;sx=null;
+if(Math.abs(dx)>50&&Math.abs(dx)>1.5*Math.abs(dy)){swiped=true;go(dx<0?1:-1)}});
+c.addEventListener("pointercancel",()=>{sx=null});
+c.addEventListener("click",e=>{
+if(swiped){swiped=false;return}
+if(e.target.closest("button"))return;
+if(window.getSelection&&String(getSelection()).length)return; /* selecting text shouldn't flip */
+flip()});
+
+/* Keyboard: ignored while the filter sheet is open, in form controls, or with ⌘/⌃/⌥ held. */
+document.addEventListener("keydown",e=>{
+if(dlg.open||e.metaKey||e.ctrlKey||e.altKey)return;
+const t=e.target;if(t.closest&&t.closest("dialog,input,select,textarea"))return;
+if(e.key==="ArrowRight"){e.preventDefault();go(1)}
+else if(e.key==="ArrowLeft"){e.preventDefault();go(-1)}
+else if(e.key==="1")mark("m");
+else if(e.key==="2")mark("g");
+else if(e.key===" "){
+/* Let Space press other focused buttons (Filter, Shuffle); in the action bar or elsewhere it flips. */
+if(t.closest&&t.closest("button")&&!t.closest(".actions"))return;
+e.preventDefault();flip()}
+});
+
+build();drawFilters();render();
+</script></body></html>
