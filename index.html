@@ -201,7 +201,7 @@ Shuffle</button>
 <dialog class="sheet" id="sheet" aria-labelledby="sheet-t"><div class="panel">
 <div class="sheet-h"><h2 id="sheet-t">Choose cards</h2><button class="link" id="x" type="button">Close</button></div>
 <div class="sheet-b">
-<section class="sec">
+<section class="sec" id="unit-sec">
 <div class="sec-h"><h3 id="unit-h">Chapters</h3><span><button class="link" id="fall" type="button">Select all</button><button class="link" id="fnone" type="button">Clear all</button></span></div>
 <div id="filters"></div>
 </section>
@@ -275,13 +275,19 @@ box.append(sec)});
 let cur=null,CH={},D=[],LBL={},UNIT="Ch",KEY="",MKEY="",SKEY="";
 let groups={},chs=[],all=[],sel=new Set(),mk={},show="all";
 const gid=(ch,l)=>ch+"-"+l;
+/* Chapters are optional. Cards without ch go in one ungrouped set (NOCH); lec defaults to 1. */
+const NOCH="_";
+const hasCh=d=>d.ch!=null&&d.ch!=="";
+const lecOf=d=>d.lec??1;
+const gidOf=d=>hasCh(d)?gid(d.ch,lecOf(d)):NOCH;
 const lecLabel=(ch,l)=>LBL[ch+"-"+l]||"Lecture "+l;
 const lecsOf=ch=>[...groups[ch]].sort((a,b)=>a-b);
-/* Marks: 'g' = got it, 'm' = missed. Keyed by chapter-lecture-question so they survive adding cards. */
-const cid=d=>d.ch+"-"+d.lec+"-"+d.n;
+/* Marks: 'g' = got it, 'm' = missed. Keyed by chapter-lecture-question (or just the question
+   number for cards without a chapter) so they survive adding cards. */
+const cid=d=>hasCh(d)?d.ch+"-"+lecOf(d)+"-"+d.n:String(d.n);
 const saveSel=()=>store(KEY,JSON.stringify([...sel]));
 const saveMk=()=>store(MKEY,JSON.stringify(mk));
-const inSel=d=>sel.has(gid(d.ch,d.lec));
+const inSel=d=>sel.has(gidOf(d));
 const stOk=d=>show==="all"||(show==="u"?!mk[cid(d)]:mk[cid(d)]===show);
 const cards=()=>D.map((d,k)=>k).filter(k=>inSel(D[k])&&stOk(D[k]));
 const SHOWN={all:"All",m:"Missed",u:"Not marked",g:"Got it"};
@@ -292,9 +298,10 @@ let shuffled=false,ord=[],i=0,f=false,atEnd=false,armed=null,openTok=0;
 function useExam(ex,data){
 cur=ex;CH=data.CH||{};D=data.D||[];LBL=data.LBL||{};UNIT=data.unit||"Ch";
 KEY=ex.store;MKEY=KEY+"_marks";SKEY=KEY+"_show";
-groups={};D.forEach(d=>{(groups[d.ch]=groups[d.ch]||new Set()).add(d.lec)});
+groups={};D.forEach(d=>{if(hasCh(d))(groups[d.ch]=groups[d.ch]||new Set()).add(lecOf(d))});
 chs=Object.keys(groups).sort((a,b)=>a-b);
 all=[];chs.forEach(ch=>lecsOf(ch).forEach(l=>all.push(gid(ch,l))));
+if(D.some(d=>!hasCh(d)))all.push(NOCH);
 sel=new Set();
 try{const s=JSON.parse(load(KEY));if(Array.isArray(s))sel=new Set(s.filter(k=>all.includes(k)))}catch(e){}
 if(!sel.size)all.forEach(k=>sel.add(k));
@@ -303,8 +310,9 @@ show=load(SKEY);if(!["all","m","u","g"].includes(show))show="all";
 shuffled=false;$("shuf").setAttribute("aria-pressed","false");
 const word=UNIT==="Ch"?"chapters":UNIT.toLowerCase()+"s";
 $("unit-h").textContent=word[0].toUpperCase()+word.slice(1);
-$("prog-h").textContent="Progress in selected "+word;
-$("clr-note").textContent="Only clears marks in the selected "+word+".";
+$("unit-sec").hidden=!chs.length;
+$("prog-h").textContent=chs.length?"Progress in selected "+word:"Progress";
+$("clr-note").textContent=chs.length?"Only clears marks in the selected "+word+".":"Clears all marks for this exam.";
 }
 
 function shuffle(a){for(let k=a.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[a[k],a[j]]=[a[j],a[k]]}return a}
@@ -314,10 +322,11 @@ function apply(){saveSel();build();drawFilters();render()}
 
 function selSummary(){
 if(!sel.size)return "Nothing selected";
-if(sel.size===all.length)return "All "+(UNIT==="Ch"?"chapters":UNIT.toLowerCase()+"s");
+if(!chs.length||sel.size===all.length)return chs.length?"All "+(UNIT==="Ch"?"chapters":UNIT.toLowerCase()+"s"):"All cards";
 const parts=[];
 chs.forEach(ch=>{const ls=lecsOf(ch),on=ls.filter(l=>sel.has(gid(ch,l)));if(!on.length)return;
 parts.push(on.length===ls.length?UNIT+" "+ch:UNIT+" "+ch+" ("+on.map(l=>"L"+l).join(", ")+")")});
+if(sel.has(NOCH))parts.push("Other");
 return parts.join(", ");
 }
 
@@ -331,8 +340,11 @@ const g=el("div","chgrp"+(on?" on":""));
 g.append(row("chl","ch"+ch,UNIT+" "+ch+(CH[ch]?" · "+CH[ch]:""),D.filter(d=>d.ch==ch).length,on===ks.length,on>0&&on<ks.length,
 ()=>{ks.forEach(k=>on===ks.length?sel.delete(k):sel.add(k));apply()}));
 if(lecs.length>1)lecs.forEach(l=>{const k=gid(ch,l);
-g.append(row("lec",k,lecLabel(ch,l),D.filter(d=>d.ch==ch&&d.lec==l).length,sel.has(k),false,()=>{sel.has(k)?sel.delete(k):sel.add(k);apply()}))});
+g.append(row("lec",k,lecLabel(ch,l),D.filter(d=>d.ch==ch&&lecOf(d)==l).length,sel.has(k),false,()=>{sel.has(k)?sel.delete(k):sel.add(k);apply()}))});
 box.append(g)});
+/* Cards without a chapter get an "Other" row when the exam also has chapters. */
+if(chs.length&&all.includes(NOCH)){const g=el("div","chgrp"+(sel.has(NOCH)?" on":""));
+g.append(row("chl",NOCH,"Other",D.filter(d=>!hasCh(d)).length,sel.has(NOCH),false,()=>{sel.has(NOCH)?sel.delete(NOCH):sel.add(NOCH);apply()}));box.append(g)}
 
 const S=D.filter(inSel),g=S.filter(d=>mk[cid(d)]==="g").length,m=S.filter(d=>mk[cid(d)]==="m").length,u=S.length-g-m;
 const sf=$("sfilt");sf.replaceChildren();
@@ -378,8 +390,9 @@ b.append(btn("Choose "+word+"s","btn primary",openSheet));
 const msg={m:["No missed cards","You haven't marked any card in the selection as missed."],
 u:["No unmarked cards","Every card in the selection is already marked."],
 g:["No “Got it” cards","You haven't marked any card in the selection as got it."]}[show];
-e.append(el("p","empty-t",msg[0]),el("p","",msg[1]+" Show all cards, or pick other "+word+"s."));
-b.append(btn("Show all cards","btn primary",()=>{show="all";store(SKEY,"all");apply()}),btn("Choose "+word+"s","btn",openSheet));
+e.append(el("p","empty-t",msg[0]),el("p","",msg[1]+(chs.length?" Show all cards, or pick other "+word+"s.":" Show all cards to keep studying.")));
+b.append(btn("Show all cards","btn primary",()=>{show="all";store(SKEY,"all");apply()}));
+if(chs.length)b.append(btn("Choose "+word+"s","btn",openSheet));
 }
 e.append(b);c.append(e);
 }else{
@@ -387,8 +400,10 @@ const d=D[ord[i]],s=mk[cid(d)];
 $("mmiss").setAttribute("aria-pressed",s==="m");$("mgot").setAttribute("aria-pressed",s==="g");
 const tag=el("div","tag");
 /* Skip "Lecture 1" when the chapter has only one lecture and no custom label. */
-const lecPart=groups[d.ch].size>1||LBL[d.ch+"-"+d.lec]?" · "+lecLabel(d.ch,d.lec):"";
-tag.append(el("span","",UNIT+" "+d.ch+(CH[d.ch]?" "+CH[d.ch]:"")+lecPart+" · Q"+d.n));
+let where="Q"+d.n;
+if(hasCh(d)){const l=lecOf(d),lecPart=groups[d.ch].size>1||LBL[d.ch+"-"+l]?" · "+lecLabel(d.ch,l):"";
+where=UNIT+" "+d.ch+(CH[d.ch]?" "+CH[d.ch]:"")+lecPart+" · "+where}
+tag.append(el("span","",where));
 if(s)tag.append(el("span","badge s-"+s,s==="g"?"✓ Got it":"✗ Missed"));
 c.append(tag);
 if(!f)c.append(el("p","q",d.q));
