@@ -8,14 +8,14 @@
 --font:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
 --bg:#f3f4f6;--surface:#fff;--ink:#1c1f24;--mut:#5f6670;--line:#e1e4e9;
 --ac:#2f5fd0;--on-ac:#fff;--acsoft:#e8eefc;
---good:#1c7a47;--goodbg:#e3f3ea;--bad:#c0392b;--badbg:#fbe8e5;
+--good:#1c7a47;--goodbg:#e3f3ea;--bad:#8f6200;--badbg:#fdf0c4;--badfill:#e2a900;--danger:#c0392b;
 --warnbg:#fdf3dc;--warnink:#6b4a0a;--warnline:#e6c26a;
 --chkbg:#eef0f3;--chkink:#454c56;--chkline:#c9ced6;
 --shadow:0 1px 2px rgba(16,24,40,.05),0 6px 20px rgba(16,24,40,.06)}
 @media(prefers-color-scheme:dark){:root{
 --bg:#111317;--surface:#1b1e24;--ink:#e8eaee;--mut:#9aa1ab;--line:#2c3038;
 --ac:#7aa2ff;--on-ac:#0d1222;--acsoft:#1f2a44;
---good:#5fd08f;--goodbg:#173022;--bad:#ff8a7a;--badbg:#3a1e1b;
+--good:#5fd08f;--goodbg:#173022;--bad:#f2c94c;--badbg:#3a2f0f;--badfill:#e0b100;--danger:#ff8a7a;
 --warnbg:#33290f;--warnink:#f2d89b;--warnline:#7a6224;
 --chkbg:#23262d;--chkink:#c3c8d0;--chkline:#3b4049;
 --shadow:0 1px 2px rgba(0,0,0,.3)}}
@@ -81,9 +81,12 @@ main.home{display:block;padding-bottom:calc(24px + env(safe-area-inset-bottom))}
 .card.dragging{cursor:grabbing;user-select:none;-webkit-user-select:none}
 .card.snap{transition:transform .2s ease-out}
 .card.fly{transition:transform .2s ease-in,opacity .2s ease-in;opacity:0}
-.sw{position:absolute;top:42%;padding:4px 14px;border:3px solid;border-radius:10px;font-weight:800;font-size:22px;letter-spacing:.02em;background:var(--surface);pointer-events:none;opacity:0}
-.sw-g{left:18px;color:var(--good);opacity:var(--g,0);transform:rotate(-10deg)}
-.sw-m{right:18px;color:var(--bad);opacity:var(--m,0);transform:rotate(10deg)}
+/* While dragging the answer side, the card tints green (Got it, right) or yellow (Missed, left).
+   --g / --m go from 0 to 1 with drag distance. */
+.card::before,.card::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none}
+.card::before{background:var(--good);opacity:calc(var(--g,0)*.32)}
+.card::after{background:var(--badfill);opacity:calc(var(--m,0)*.38)}
+.card.snap::before,.card.snap::after{transition:opacity .2s ease-out}
 .swipe-tip{margin:auto 0 0;padding-top:8px;text-align:center;font-size:13px;color:var(--mut)}
 @media(hover:hover){.swipe-tip{display:none}}
 @media(prefers-reduced-motion:reduce){.card.a-in,.card.a-r,.card.a-l,.card.a-deck{animation:none}.card.snap,.card.fly{transition:none}.prog i{transition:none}}
@@ -160,9 +163,9 @@ body:has(dialog[open]){overflow:hidden}
 .stat b{font-size:22px;line-height:1.2;color:var(--ink);font-variant-numeric:tabular-nums}
 .stat.s-g b{color:var(--good)}.stat.s-m b{color:var(--bad)}
 .sbar{display:flex;height:6px;border-radius:3px;background:var(--line);overflow:hidden;margin:10px 0 14px}
-.sbar .s-g{background:var(--good)}.sbar .s-m{background:var(--bad)}
-.btn.clear{width:100%;background:transparent;color:var(--bad)}
-.btn.clear.armed{background:var(--bad);color:var(--surface);border-color:transparent}
+.sbar .s-g{background:var(--good)}.sbar .s-m{background:var(--badfill)}
+.btn.clear{width:100%;background:transparent;color:var(--danger)}
+.btn.clear.armed{background:var(--danger);color:var(--surface);border-color:transparent}
 .fine{font-size:13px;color:var(--mut);margin:6px 0 0;text-align:center}
 
 @media(hover:none){.keys,kbd{display:none}}
@@ -503,7 +506,7 @@ clr.textContent="Tap again to clear "+n+" mark"+(n===1?"":"s");clr.classList.add
    Short drags spring back. */
 const reduceMotion=matchMedia("(prefers-reduced-motion: reduce)");
 let drag=null,swiped=false,busy=false;
-function clearDrag(){c.classList.remove("dragging","fly");c.style.transform="";c.style.removeProperty("--g");c.style.removeProperty("--m");c.querySelectorAll(".sw").forEach(x=>x.remove())}
+function clearDrag(){c.classList.remove("dragging","fly");c.style.transform="";c.style.removeProperty("--g");c.style.removeProperty("--m")}
 function moveCard(dx){
 c.style.transform="translateX("+dx+"px) rotate("+(dx/24)+"deg)";
 if(f){const p=Math.min(Math.abs(dx)/110,1);c.style.setProperty("--g",dx>0?p:0);c.style.setProperty("--m",dx<0?p:0)}
@@ -527,7 +530,6 @@ if(!drag.on){
 if(Math.abs(dx)<10||Math.abs(dx)<Math.abs(dy))return;
 drag.on=true;swiped=true;c.classList.remove("a-in","a-r","a-l","a-deck");c.classList.add("dragging");
 try{c.setPointerCapture(e.pointerId)}catch(_){}
-if(f)c.append(el("div","sw sw-g","✓ Got it"),el("div","sw sw-m","✗ Missed"));
 }
 drag.dx=dx;moveCard(dx);
 });
