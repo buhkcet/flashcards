@@ -66,9 +66,27 @@ main.home{display:block;padding-bottom:calc(24px + env(safe-area-inset-bottom))}
 .card{flex:1;min-height:300px;display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow);cursor:pointer;touch-action:pan-y;-webkit-tap-highlight-color:transparent}
 .card.flipped{box-shadow:inset 0 4px 0 var(--ac),var(--shadow)}
 .card.isempty{cursor:default;justify-content:center}
-.card.in{animation:in .18s ease-out}
+/* Entry animations: a-r = next card slides in from the right, a-l = previous card from the left,
+   a-deck = next card rises from the deck after a swipe-to-mark, a-in = flip/refresh. */
+.card{position:relative}
+.card.a-in{animation:in .18s ease-out}
+.card.a-r{animation:fromR .24s ease-out}
+.card.a-l{animation:fromL .24s ease-out}
+.card.a-deck{animation:deck .24s ease-out}
 @keyframes in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
-@media(prefers-reduced-motion:reduce){.card.in{animation:none}.prog i{transition:none}}
+@keyframes fromR{from{opacity:0;transform:translateX(56px)}to{opacity:1;transform:none}}
+@keyframes fromL{from{opacity:0;transform:translateX(-56px)}to{opacity:1;transform:none}}
+@keyframes deck{from{opacity:.3;transform:scale(.94)}to{opacity:1;transform:none}}
+/* Dragging: the card follows the finger; snap = spring back; fly = thrown off-screen. */
+.card.dragging{cursor:grabbing;user-select:none;-webkit-user-select:none}
+.card.snap{transition:transform .2s ease-out}
+.card.fly{transition:transform .2s ease-in,opacity .2s ease-in;opacity:0}
+.sw{position:absolute;top:42%;padding:4px 14px;border:3px solid;border-radius:10px;font-weight:800;font-size:22px;letter-spacing:.02em;background:var(--surface);pointer-events:none;opacity:0}
+.sw-g{left:18px;color:var(--good);opacity:var(--g,0);transform:rotate(-10deg)}
+.sw-m{right:18px;color:var(--bad);opacity:var(--m,0);transform:rotate(10deg)}
+.swipe-tip{margin:auto 0 0;padding-top:8px;text-align:center;font-size:13px;color:var(--mut)}
+@media(hover:hover){.swipe-tip{display:none}}
+@media(prefers-reduced-motion:reduce){.card.a-in,.card.a-r,.card.a-l,.card.a-deck{animation:none}.card.snap,.card.fly{transition:none}.prog i{transition:none}}
 .tag{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;font-size:13px;color:var(--mut);margin-bottom:14px}
 .badge{flex:none;font-weight:600;font-size:12px;border-radius:10px;padding:2px 9px}
 .badge.s-g{background:var(--goodbg);color:var(--good)}
@@ -293,7 +311,7 @@ const cards=()=>D.map((d,k)=>k).filter(k=>inSel(D[k])&&stOk(D[k]));
 const SHOWN={all:"All",m:"Missed",u:"Not marked",g:"Got it"};
 
 const c=$("c"),dlg=$("sheet"),clr=$("clr");
-let shuffled=false,ord=[],i=0,f=false,atEnd=false,armed=null,openTok=0;
+let shuffled=false,ord=[],i=0,f=false,atEnd=false,armed=null,openTok=0,enter=null;
 
 function useExam(ex,data){
 cur=ex;CH=data.CH||{};D=data.D||[];LBL=data.LBL||{};UNIT=data.unit||"Ch";
@@ -377,7 +395,7 @@ $("flip").disabled=!has;
 $("flip").hidden=has&&f;$("markrow").hidden=!(has&&f);
 c.replaceChildren();
 c.classList.toggle("flipped",has&&f);c.classList.toggle("isempty",!has);
-c.classList.remove("in");void c.offsetWidth;c.classList.add("in");
+c.classList.remove("a-in","a-r","a-l","a-deck");void c.offsetWidth;c.classList.add("a-"+(enter||"in"));enter=null;
 if(!has){
 const e=el("div","empty"),b=el("div","btns");
 const word=UNIT==="Ch"?"chapter":UNIT.toLowerCase();
@@ -411,6 +429,7 @@ else{
 c.append(el("p","q-small",d.q),el("p","lbl","Answer"),el("p","a",d.a),el("p","lbl","Why"),el("p","why",d.why));
 if(d.mis)c.append(note("mis","Common mistake",d.mis));
 if(d.chk)c.append(note("chk","Check your slides",d.chk));
+c.append(el("p","swipe-tip","Swipe right if you got it · left if you missed it"));
 }
 }
 /* If the focused control was just hidden (Show answer ↔ mark buttons), move focus to its replacement. */
@@ -418,10 +437,11 @@ if(ae&&ae.closest&&ae.closest(".actions")&&ae.closest("[hidden]"))(f?$("mmiss"):
 }
 
 function flip(){if(!cur||!ord.length)return;f=!f;render()}
-function go(k){if(!cur||!ord.length)return;i=(i+k+ord.length)%ord.length;f=false;atEnd=false;render();window.scrollTo({top:0})}
+/* anim: how the new card enters (defaults: next slides in from the right, previous from the left). */
+function go(k,anim){if(!cur||!ord.length)return;i=(i+k+ord.length)%ord.length;f=false;atEnd=false;enter=anim||(k>0?"r":"l");render();window.scrollTo({top:0})}
 /* Marking saves and moves on. On the last card it stays put instead of wrapping. */
-function mark(v){if(!cur||!f||!ord.length)return;mk[cid(D[ord[i]])]=v;saveMk();drawFilters();
-if(i<ord.length-1)go(1);else{f=false;atEnd=true;render()}}
+function mark(v,anim){if(!cur||!f||!ord.length)return;mk[cid(D[ord[i]])]=v;saveMk();drawFilters();
+if(i<ord.length-1)go(1,anim);else{f=false;atEnd=true;enter=anim||"in";render()}}
 
 function openSheet(){if(!cur)return;disarm();drawFilters();if(dlg.showModal)dlg.showModal();else dlg.setAttribute("open","");dlg.querySelector(".sheet-b").scrollTop=0}
 function closeSheet(){disarm();if(dlg.open){if(dlg.close)dlg.close();else dlg.removeAttribute("open")}}
@@ -477,12 +497,48 @@ if(armed){disarm();for(const d of D)if(inSel(d))delete mk[cid(d)];saveMk();apply
 else{const n=D.filter(d=>inSel(d)&&mk[cid(d)]).length;
 clr.textContent="Tap again to clear "+n+" mark"+(n===1?"":"s");clr.classList.add("armed");armed=setTimeout(disarm,3000)}};
 
-/* Card: tap/click flips, horizontal swipe moves (a swipe never flips). */
-let sx=null,sy=0,swiped=false;
-c.addEventListener("pointerdown",e=>{if(e.button)return;sx=e.clientX;sy=e.clientY;swiped=false});
-c.addEventListener("pointerup",e=>{if(sx===null)return;const dx=e.clientX-sx,dy=e.clientY-sy;sx=null;
-if(Math.abs(dx)>50&&Math.abs(dx)>1.5*Math.abs(dy)){swiped=true;go(dx<0?1:-1)}});
-c.addEventListener("pointercancel",()=>{sx=null});
+/* Card gestures. Tap flips. Dragging sideways moves the card with the finger (a drag never flips):
+   question side: drag left = next card, drag right = previous card.
+   answer side:   drag right = Got it, drag left = Missed it (a stamp shows which while dragging).
+   Short drags spring back. */
+const reduceMotion=matchMedia("(prefers-reduced-motion: reduce)");
+let drag=null,swiped=false,busy=false;
+function clearDrag(){c.classList.remove("dragging","fly");c.style.transform="";c.style.removeProperty("--g");c.style.removeProperty("--m");c.querySelectorAll(".sw").forEach(x=>x.remove())}
+function moveCard(dx){
+c.style.transform="translateX("+dx+"px) rotate("+(dx/24)+"deg)";
+if(f){const p=Math.min(Math.abs(dx)/110,1);c.style.setProperty("--g",dx>0?p:0);c.style.setProperty("--m",dx<0?p:0)}
+}
+function springBack(){
+if(reduceMotion.matches){clearDrag();return}
+c.classList.remove("dragging");c.classList.add("snap");c.style.transform="";c.style.setProperty("--g",0);c.style.setProperty("--m",0);
+setTimeout(()=>{c.classList.remove("snap");clearDrag()},200);
+}
+function throwCard(dir,then){
+if(reduceMotion.matches){clearDrag();then();return}
+busy=true;c.classList.remove("dragging");c.classList.add("fly");
+c.style.transform="translateX("+(dir*(c.offsetWidth+80))+"px) rotate("+(dir*14)+"deg)";
+setTimeout(()=>{clearDrag();busy=false;then()},200);
+}
+c.addEventListener("pointerdown",e=>{if(e.button||busy||!ord.length)return;drag={id:e.pointerId,x:e.clientX,y:e.clientY,dx:0,on:false};swiped=false});
+c.addEventListener("pointermove",e=>{
+if(!drag||e.pointerId!==drag.id)return;
+const dx=e.clientX-drag.x,dy=e.clientY-drag.y;
+if(!drag.on){
+if(Math.abs(dx)<10||Math.abs(dx)<Math.abs(dy))return;
+drag.on=true;swiped=true;c.classList.remove("a-in","a-r","a-l","a-deck");c.classList.add("dragging");
+try{c.setPointerCapture(e.pointerId)}catch(_){}
+if(f)c.append(el("div","sw sw-g","✓ Got it"),el("div","sw sw-m","✗ Missed"));
+}
+drag.dx=dx;moveCard(dx);
+});
+c.addEventListener("pointerup",()=>{
+const d=drag;drag=null;if(!d||!d.on)return;
+if(Math.abs(d.dx)<Math.min(100,c.offsetWidth*.25)){springBack();return}
+const dir=d.dx>0?1:-1;
+if(f)throwCard(dir,()=>mark(dir>0?"g":"m","deck"));
+else throwCard(dir,()=>go(-dir));
+});
+c.addEventListener("pointercancel",()=>{if(drag&&drag.on)springBack();drag=null});
 c.addEventListener("click",e=>{
 if(swiped){swiped=false;return}
 if(e.target.closest("button,a"))return;
