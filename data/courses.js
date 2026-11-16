@@ -12,5 +12,8 @@ FC.courses([
   {id:"mech3542", code:"MECH 3542", name:"", exams:[
     {id:"midterm1", name:"Midterm 1", file:"data/mech3542-midterm1.js"},
     {id:"midterm2", name:"Midterm 2", file:"data/mech3542-midterm2.js", storageKey:"mech3542_sel"}
+  ]},
+  {id:"mech3492", code:"MECH 3492", name:"", exams:[
+    {id:"midterm1", name:"Midterm 1 · Part 1", file:"data/mech3492-midterm1.js"}
   ]}
 ]);
